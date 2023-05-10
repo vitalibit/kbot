@@ -1,8 +1,8 @@
 APP=$(shell git remote get-url origin | xargs basename | cut -d '.' -f 1)
 REGISTRY=vitalibit
 VERSION=$(shell git describe --tags --abbrev=0)-$(shell git rev-parse --short HEAD)
-TARGETOS=linux
-TARGETARCH=arm64 #shell dpkg --print-architecture
+TARGETOS=linux #$(shell uname -s | tr '[:upper:]' '[:lower:]'
+TARGETARCH=arm64 #($shell dpkg --print-architecture)
 
 format:
 	gofmt -s -w ./
