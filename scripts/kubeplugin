@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Define command-line arguments
+NAMESPACE=$1
+RESOURCE_TYPE=$2
+
+# Function to retrieve resource usage statistics from Kubernetes
+get_resource_stats() {
+  kubectl get "$RESOURCE_TYPE" -n "$NAMESPACE" | tail -n +2
+}
+
+# Function to extract CPU and memory usage from the output
+extract_stats() {
+  local line="$1"
+  local name=$(echo "$line" | awk '{print $1}')
+  local cpu=$(echo "$line" | awk '{print $2}')
+  local memory=$(echo "$line" | awk '{print $3}')
+  echo "Resource: $RESOURCE_TYPE, Namespace: $NAMESPACE, Name: $name, CPU: $cpu, Memory: $memory"
+}
+
+# Main script
+resource_stats=$(get_resource_stats)
+while IFS= read -r line; do
+  extract_stats "$line"
+done <<< "$resource_stats"
