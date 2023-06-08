@@ -11,6 +11,7 @@ Before using the script, ensure that you have met the following requirements:
 -   The `kubeplugin.sh` script is available in your environment. If you are using it from a Git repository, clone the repository to obtain the script.
     
     git clone https://github.com/vitalibit/kbot
+    
 ### Setting Execution Permissions
 
 Make sure that the `kubeplugin.sh` script has execution permissions. If you cloned it from a Git repository, run the command `chmod +x kubeplugin` to grant executable permissions.
