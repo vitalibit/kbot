@@ -38,7 +38,9 @@ Make sure that the `kubeplugin.sh` script has execution permissions. If you clon
 ### Examples
 
 1.  Get resource usage statistics for the `pods` resource in the `kube-system` namespace:
+
     bash kubeplugin RESOURCE_TYPE NAMESPACE
+    
 2.  Get resource usage statistics for the `nodes` resource (without specifying a namespace):
 
     bash kubeplugin nodes
