@@ -9,6 +9,7 @@ Before using the script, ensure that you have met the following requirements:
 -   Install `kubectl` and configure the connection to your Kubernetes cluster.
 -   Have the necessary access rights to retrieve resource statistics.
 -   The `kubeplugin.sh` script is available in your environment. If you are using it from a Git repository, clone the repository to obtain the script.
+    
     git clone https://github.com/vitalibit/kbot
 ### Setting Execution Permissions
 
