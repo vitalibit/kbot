@@ -1,21 +1,46 @@
 #!/bin/bash
 
 # Define command-line arguments
-NAMESPACE=$1
-RESOURCE_TYPE=$2
+RESOURCE_TYPE=$1
+NAMESPACE=$2
 
 # Function to retrieve resource usage statistics from Kubernetes
 get_resource_stats() {
-  kubectl get "$RESOURCE_TYPE" -n "$NAMESPACE" | tail -n +2
+  if [[ "$RESOURCE_TYPE" == "nodes" ]]; then
+    if [[ -n "$NAMESPACE" ]]; then
+      echo "Invalid argument. Namespace should not be specified for 'nodes'."
+      exit 1
+    fi
+    kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.allocatable.cpu}{"\t"}{.status.allocatable.memory}{"\n"}{end}' | awk 'NF==3'
+  elif [[ "$RESOURCE_TYPE" == "pods" ]]; then
+    if [[ -z "$NAMESPACE" ]]; then
+      echo "Namespace argument is required for 'pods'."
+      exit 1
+    fi
+    kubectl get pods -n "$NAMESPACE" -o jsonpath='{range .items[*]}{range .spec.containers[*]}{.name}{"\t"}{.resources.requests.cpu}{"\t"}{.resources.requests.memory}{"\n"}{end}{end}' | awk 'NF==3'
+  else
+    echo "Invalid resource type. Please specify either 'nodes' or 'pods'."
+    exit 1
+  fi
 }
 
 # Function to extract CPU and memory usage from the output
 extract_stats() {
   local line="$1"
-  local name=$(echo "$line" | awk '{print $1}')
-  local cpu=$(echo "$line" | awk '{print $2}')
-  local memory=$(echo "$line" | awk '{print $3}')
-  echo "Resource: $RESOURCE_TYPE, Namespace: $NAMESPACE, Name: $name, CPU: $cpu, Memory: $memory"
+  if [[ "$line" == "Invalid"* ]]; then
+    echo "$line"
+  elif [[ "$line" == "Namespace argument"* ]]; then
+    echo "$line"
+  else
+    local name=$(echo "$line" | awk '{print $1}')
+    local cpu=$(echo "$line" | awk '{print $2}')
+    local memory=$(echo "$line" | awk '{print $3}')
+    if [[ "$RESOURCE_TYPE" == "nodes" ]]; then
+      echo "Resource: $RESOURCE_TYPE, Namespace: not required, Name: $name, CPU: $cpu, Memory: $memory"
+    else
+      echo "Resource: $RESOURCE_TYPE, Namespace: $NAMESPACE, Name: $name, CPU: $cpu, Memory: $memory"
+    fi
+  fi
 }
 
 # Main script
