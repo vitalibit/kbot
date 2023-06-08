@@ -44,3 +44,4 @@ Make sure that the `kubeplugin.sh` script has execution permissions. If you clon
 2.  Get resource usage statistics for the `nodes` resource (without specifying a namespace):
 
     bash kubeplugin nodes
+    
