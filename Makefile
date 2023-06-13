@@ -5,7 +5,7 @@ TARGETARCH=$(shell dpkg --print-architecture)
 LINUX_TARGETOS=linux
 MACOS_TARGETOS=darwin
 WINDOWS_TARGETOS=windows
-#DOCKERHUB_REGISTRY=vitalibit
+DOCKERHUB_REGISTRY=vitalibit
 REGISTRY=gcr.io
 PROJECT_ID=k8s-k3s-386218
 IMAGE_TAG=${REGISTRY}/${PROJECT_ID}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}
@@ -34,13 +34,14 @@ macOS:
 windows:
 	$(MAKE) build TARGETOS=$(WINDOWS_TARGETOS)
 
-#image:
-#	docker build . -t ${REGISTRY}/${APP}:${VERSION}-${TARGETARCH}
+image_dockerhub:
+	docker build . -t ${DOCKERHUB_REGISTRY}/${APP}:${VERSION}-${TARGETARCH}
+
 image:
 	docker build . -t ${IMAGE_TAG}
 
-#push:
-#	docker push ${REGISTRY}/${APP}:${VERSION}-${TARGETARCH}
+push_dockerhub:
+	docker push ${DOCKERHUB_REGISTRY}/${APP}:${VERSION}-${TARGETARCH}
 push:
 	gcloud auth login
 	gcloud config set project ${PROJECT_ID}

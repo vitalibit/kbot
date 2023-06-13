@@ -1,0 +1,15 @@
+# Default values for helm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: vitalibit
+  tag: "v1.0.8-69f9910-amd64"
+
+secret:
+  name: kbot
+  key: token
+  env: TELE_TOKEN
+
