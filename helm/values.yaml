@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: vitalibit
-  tag: "v1.0.8-69f9910"
+  tag: "v1.0.8-0300ccb"
   arch: amd64
 
 secret:
