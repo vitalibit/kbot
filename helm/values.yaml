@@ -3,16 +3,13 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
-
 image:
   registry: ghcr.io
   repository: vitalibit/kbot
-  tag: "v1.0.8-0300ccb"
+  tag: "v1.0.8-61129e3"
   os: linux
   arch: amd64
-
 secret:
   name: kbot
   key: token
   env: TELE_TOKEN
-
