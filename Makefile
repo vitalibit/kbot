@@ -8,7 +8,8 @@ WINDOWS_TARGETOS=windows
 DOCKERHUB_REGISTRY=vitalibit
 REGISTRY=gcr.io
 PROJECT_ID=k8s-k3s-386218
-IMAGE_TAG=${REGISTRY}/${PROJECT_ID}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}
+GCR_IMAGE_TAG=${REGISTRY}/${PROJECT_ID}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}
+IMAGE_TAG=${REGISTRY}/${APP}:${VERSION}-${TARGETOS}-${TARGETARCH}
 
 format:
 	gofmt -s -w ./
@@ -37,17 +38,22 @@ windows:
 image_dockerhub:
 	docker build . -t ${DOCKERHUB_REGISTRY}/${APP}:${VERSION}-${TARGETARCH}
 
-image:
-	docker build . -t ${IMAGE_TAG}
+image-gcr:
+	docker build . -t ${GCR_IMAGE_TAG}
 
 push_dockerhub:
 	docker push ${DOCKERHUB_REGISTRY}/${APP}:${VERSION}-${TARGETARCH}
-push:
+push_gcr:
 	gcloud auth login
 	gcloud config set project ${PROJECT_ID}
 	gcloud auth configure-docker
-	docker push ${IMAGE_TAG}
+	docker push ${GCR_IMAGE_TAG}
 
-clean:
+clean_gcr:
 	rm -rf kbot
-	docker rmi ${IMAGE_TAG}
+	docker rmi ${GCR_IMAGE_TAG}
+
+image: 
+	docker build . -t ${IMAGE_TAG}
+push:
+	docker push ${IMAGE_TAG}

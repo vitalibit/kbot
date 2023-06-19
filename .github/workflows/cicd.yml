@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Run test
         run: make test
@@ -21,5 +23,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GIT_TOKEN }}
+      - name: Build&Push
+        env:
+          APP: "kbot"
+          REGISTRY: ghcr.io
+        run: make image push
 
 
