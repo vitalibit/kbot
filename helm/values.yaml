@@ -5,8 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: vitalibit
+  registry: ghcr.io
+  repository: vitalibit/kbot
   tag: "v1.0.8-0300ccb"
+  os: linux
   arch: amd64
 
 secret:
