@@ -3,7 +3,7 @@ pipeline {
     parameters {
 
         choice(name: 'OS', choices: ['linux', 'darwin', 'windows', 'all'], description: 'Pick OS')
-        choice(name: 'ARCH', choices: ['arm64', 'amd64', 'windows', 'all'], description: 'Pick ARCH')
+        choice(name: 'ARCH', choices: ['arm64', 'amd64', 'all'], description: 'Pick ARCH')
 
     }
     stages {
@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo "Build for platform ${params.OS}"
                 echo "Build for arch: ${params.ARCH}"
-                sh 'make build TARGETOS=${params.OS} TARGETARCH=${params.ARCH}'
+                sh "make build TARGETOS=${params.OS} TARGETARCH=${params.ARCH}"
             }
         }
     }
