@@ -30,7 +30,7 @@ to quickly create a Cobra application.`,
 
 		fmt.Printf("kbot %s started", appVersion)
 
-		tokenBytes, err := ioutil.ReadFile("/etc/app/secret")
+		tokenBytes, err := ioutil.ReadFile("/etc/app/secret/token")
 		if err != nil {
 			log.Println("Failed to read token file:", err)
 			return
