@@ -38,7 +38,7 @@ to quickly create a Cobra application.`,
 
 		TeleToken = string(tokenBytes)
 		fmt.Println("Creating bot...")
-		fmt.Println("Token:", TeleToken)
+		fmt.Printf("Token: %s, Length: %d, Type: %T\n", TeleToken, len(TeleToken), TeleToken)
 
 		kbot, err := telebot.NewBot(telebot.Settings{
 			URL:    "",
