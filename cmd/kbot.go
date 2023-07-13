@@ -76,15 +76,18 @@ to quickly create a Cobra application.`,
 		http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
 			updatedSecretValue := strings.TrimSpace(string(tokenBytes))
 			if currentSecretValue != updatedSecretValue {
-				w.WriteHeader(http.StatusServiceUnavailable)
+				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("Token has not changed."))
+				log.Println("Token has not changed.")
 			} else {
 				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("Token has changed."))
+				log.Println("Token has changed.")
 			}
 		})
 
 		log.Fatal(http.ListenAndServe(":8080", nil))
+
 
 	},
 }
