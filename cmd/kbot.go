@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"time"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	telebot "gopkg.in/telebot.v3"
@@ -60,7 +61,7 @@ to quickly create a Cobra application.`,
 
 			switch payload {
 			case "hello":
-				err = m.Send(fmt.Sprintf("Hello I'm KBot %s, token = %s!", appVersion, TeleToken))
+				err = m.Send(fmt.Sprintf("Hello I'm KBot %s!", appVersion))
 			}
 
 			return err
@@ -68,6 +69,22 @@ to quickly create a Cobra application.`,
 		})
 
 		kbot.Start()
+
+		// Check if token has changed
+		currentSecretValue := TeleToken
+
+		http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
+			updatedSecretValue := strings.TrimSpace(string(tokenBytes))
+			if currentSecretValue != updatedSecretValue {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("Token has changed."))
+			} else {
+				w.WriteHeader(http.StatusServiceUnavailable)
+				w.Write([]byte("Token has not changed."))
+			}
+		})
+
+		log.Fatal(http.ListenAndServe(":8080", nil))
 
 	},
 }
