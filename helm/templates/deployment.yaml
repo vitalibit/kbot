@@ -34,7 +34,7 @@ spec:
         name: dev-mem
       - name: {{ .Values.secret.name }}
         secret:
-          secretName: {{ .Values.secret.key }} 
+          secretName: {{ .Values.secret.name }} 
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
