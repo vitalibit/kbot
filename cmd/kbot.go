@@ -5,25 +5,15 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"time"
 	"io/ioutil"
+	"log"
+	"time"
 
 	"github.com/spf13/cobra"
 	telebot "gopkg.in/telebot.v3"
 )
 
-var (
-	tokenBytes, err := ioutil.ReadFile("/etc/app/secrets/tele_token.txt")
-	if err != nil {
-		fmt.Println("Failed to read token file:", err)
-		return
-	}
-	
-	// TeleToken bot
-	TeleToken := string(tokenBytes)
-)
+var TeleToken string
 
 // kbotCmd represents the kbot command
 var kbotCmd = &cobra.Command{
@@ -39,16 +29,20 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		fmt.Printf("kbot %s started", appVersion)
+
+		tokenBytes, err := ioutil.ReadFile("/etc/app/secrets/tele_token.txt")
+		if err != nil {
+			log.Println("Failed to read token file:", err)
+			return
+		}
+
+		TeleToken = string(tokenBytes)
+
 		kbot, err := telebot.NewBot(telebot.Settings{
 			URL:    "",
 			Token:  TeleToken,
 			Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
 		})
-
-		// if err != nil {
-		// 	log.Fatalf("Please check TELE_TOKEN env variable. %s", err)
-		// 	return
-		// }
 
 		kbot.Handle(telebot.OnText, func(m telebot.Context) error {
 
