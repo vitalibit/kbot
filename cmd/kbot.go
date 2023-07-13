@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"time"
+	"strings"
 
 	"github.com/spf13/cobra"
 	telebot "gopkg.in/telebot.v3"
