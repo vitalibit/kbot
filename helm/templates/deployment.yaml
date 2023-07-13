@@ -46,15 +46,8 @@ spec:
             name: {{ .Values.secret.name }}
           image: {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}-{{ .Values.image.os }}-{{ .Values.image.arch | default "amd64"}}
           livenessProbe:
-            exec:
-              command:
-              - sh
-              - -c
-              - |
-                currentSecretValue=$(cat /etc/app/secret/token)
-                updatedSecretValue=$(kubectl get secret kbot -n demo -o=jsonpath='{.data.token}' | base64 -d)
-                if [ "$currentSecretValue" != "$updatedSecretValue" ]; then
-                  exit 1
-                fi
+            httpGet:
+              path: /liveness
+              port: 8080
             initialDelaySeconds: 60
             periodSeconds: 60
