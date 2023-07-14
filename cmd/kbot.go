@@ -13,7 +13,6 @@ import (
 )
 
 var TeleToken string
-var tokenBytes []byte
 
 func init() {
 	rootCmd.AddCommand(kbotCmd)
@@ -40,7 +39,7 @@ to quickly create a Cobra application.`,
 		}()
 		fmt.Println("Started server on port 8080")
 
-		fmt.Printf("kbot %s started", appVersion)
+		fmt.Printf("kbot %s started\n", appVersion)
 
 		tokenBytes, err := ioutil.ReadFile("/etc/app/secret/token")
 		if err != nil {
@@ -79,6 +78,16 @@ to quickly create a Cobra application.`,
 		})
 
 		kbot.Start()
+
+		fmt.Println("Starting server on port 8080")
+
+		go func() {
+			err := http.ListenAndServe(":8080", handleRequests())
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
+		fmt.Println("Started server on port 8080")
 	},
 }
 
@@ -86,7 +95,7 @@ func handleRequests() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/liveness":
-			currentTeleToken := strings.TrimSpace(string(tokenBytes))
+			currentTeleToken := strings.TrimSpace(string(getTokenBytes()))
 			if currentTeleToken != TeleToken {
 				w.WriteHeader(http.StatusServiceUnavailable)
 				w.Write([]byte("Secret Changed"))
@@ -98,4 +107,12 @@ func handleRequests() http.Handler {
 			http.NotFound(w, r)
 		}
 	})
+}
+
+func getTokenBytes() []byte {
+	tokenBytes, err := ioutil.ReadFile("/etc/app/secret/token")
+	if err != nil {
+		log.Println("Failed to read token file:", err)
+	}
+	return tokenBytes
 }
