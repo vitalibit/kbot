@@ -13,6 +13,7 @@ import (
 )
 
 var TeleToken string
+var tokenBytes []byte
 
 func init() {
 	rootCmd.AddCommand(kbotCmd)
@@ -85,8 +86,14 @@ func handleRequests() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/liveness":
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("OK"))
+			currentTeleToken := strings.TrimSpace(string(tokenBytes))
+			if currentTeleToken != TeleToken {
+				w.WriteHeader(http.StatusServiceUnavailable)
+				w.Write([]byte("Secret Changed"))
+			} else {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("Secret Not Changed"))
+			}
 		default:
 			http.NotFound(w, r)
 		}
