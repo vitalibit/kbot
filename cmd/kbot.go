@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -17,7 +14,10 @@ import (
 
 var TeleToken string
 
-// kbotCmd represents the kbot command
+func init() {
+	rootCmd.AddCommand(kbotCmd)
+}
+
 var kbotCmd = &cobra.Command{
 	Use:     "kbot",
 	Aliases: []string{"start"},
@@ -32,7 +32,10 @@ to quickly create a Cobra application.`,
 		fmt.Println("Starting server on port 8080")
 
 		go func() {
-			log.Fatal(http.ListenAndServe(":8080", nil))
+			err := http.ListenAndServe(":8080", handleRequests())
+			if err != nil {
+				log.Fatal(err)
+			}
 		}()
 		fmt.Println("Started server on port 8080")
 
@@ -75,36 +78,17 @@ to quickly create a Cobra application.`,
 		})
 
 		kbot.Start()
-
-		// Check if token has changed
-		currentSecretValue := TeleToken
-
-		http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
-			log.Println("Handling liveness probe request")
-			updatedSecretValue := strings.TrimSpace(string(tokenBytes))
-			if currentSecretValue != updatedSecretValue {
-				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("Token has not changed."))
-				log.Println("Token has not changed.")
-			} else {
-				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("Token has changed."))
-				log.Println("Token has changed.")
-			}
-		})
 	},
 }
 
-func init() {
-	rootCmd.AddCommand(kbotCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// kbotCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// kbotCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func handleRequests() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/liveness":
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("OK"))
+		default:
+			http.NotFound(w, r)
+		}
+	})
 }
