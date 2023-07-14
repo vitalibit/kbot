@@ -73,7 +73,10 @@ to quickly create a Cobra application.`,
 		// Check if token has changed
 		currentSecretValue := TeleToken
 
+		log.Println("Starting server on port 8080")
+
 		http.HandleFunc("/liveness", func(w http.ResponseWriter, r *http.Request) {
+			log.Println("Handling liveness probe request")
 			updatedSecretValue := strings.TrimSpace(string(tokenBytes))
 			if currentSecretValue != updatedSecretValue {
 				w.WriteHeader(http.StatusOK)
@@ -87,8 +90,8 @@ to quickly create a Cobra application.`,
 		})
 
 		log.Fatal(http.ListenAndServe(":8080", nil))
-
-
+		log.Println("End of code")
+		fmt.Println("End of code")
 	},
 }
 
