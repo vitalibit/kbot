@@ -94,6 +94,7 @@ to quickly create a Cobra application.`,
 		}()
 		log.Println("End of code")
 		fmt.Println("End of code")
+		select{}
 	},
 }
 
