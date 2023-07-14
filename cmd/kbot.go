@@ -89,7 +89,9 @@ to quickly create a Cobra application.`,
 			}
 		})
 
-		http.ListenAndServe(":8080", nil)
+		go func() {
+			log.Fatal(http.ListenAndServe(":8080", nil))
+		}()
 		log.Println("End of code")
 		fmt.Println("End of code")
 	},
