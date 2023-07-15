@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"log"
 	"net/http"
 	"strings"
@@ -42,7 +42,7 @@ to quickly create a Cobra application.`,
 		fmt.Printf("kbot %s started\n", appVersion)
 
 		TeleToken = strings.TrimSpace(string(getTokenBytes()))
-		fmt.Printf("Token: %s, Length: %d, Type: %T\n", TeleToken, len(TeleToken), TeleToken)
+		fmt.Printf("Token: %s", maskToken(TeleToken))
 
 		kbot, err := telebot.NewBot(telebot.Settings{
 			URL:    "",
@@ -94,9 +94,18 @@ func handleRequests() http.Handler {
 }
 
 func getTokenBytes() []byte {
-	tokenBytes, err := ioutil.ReadFile("/etc/app/secret/token")
+	tokenBytes, err := os.ReadFile("/etc/app/secret/token")
 	if err != nil {
 		log.Println("Failed to read token file:", err)
 	}
 	return tokenBytes
+}
+
+func maskToken(token string) string {
+	tokenLength := len(token)
+	if tokenLength <= 9 {
+		return token
+	}
+	masked := token[:10] + strings.Repeat("*", tokenLength-10)
+	return masked
 }
